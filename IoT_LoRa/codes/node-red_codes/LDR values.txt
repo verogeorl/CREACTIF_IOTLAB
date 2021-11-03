@@ -1,0 +1,9 @@
+
+Values:
+
+with a torch on it : around 200
+
+ambient light (normal lighted room) : about 1500
+
+finger on sensor (dark) : max: 4095
+

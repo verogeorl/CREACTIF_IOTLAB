@@ -1,0 +1,348 @@
+[
+    {
+        "id": "e12f6b2ed7301b11",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3387e2b3c42fb253",
+        "type": "mqtt in",
+        "z": "e12f6b2ed7301b11",
+        "name": "MQTT in",
+        "topic": "#",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "25ca0126e81c401e",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "x": 360,
+        "y": 260,
+        "wires": [
+            [
+                "22920c70fa3cc127",
+                "923d5f918072ddbd",
+                "05033953e581ed4d",
+                "e55ba3fc904c4d9a",
+                "805437b0566892b0"
+            ]
+        ]
+    },
+    {
+        "id": "22920c70fa3cc127",
+        "type": "debug",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 710,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "dcadac82b74ed7a2",
+        "type": "comment",
+        "z": "e12f6b2ed7301b11",
+        "name": "",
+        "info": "frm_payload = frame payload = the received data\nit is written in base 64 and should be converted to decimal",
+        "x": 920,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "923d5f918072ddbd",
+        "type": "base64",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "",
+        "action": "b64",
+        "property": "payload",
+        "x": 600,
+        "y": 120,
+        "wires": [
+            [
+                "e7f9920d715ed05b"
+            ]
+        ]
+    },
+    {
+        "id": "e7f9920d715ed05b",
+        "type": "function",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "",
+        "func": "msg.payload = Number(msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "05033953e581ed4d",
+        "type": "ui_gauge",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "",
+        "group": "811e5a4a3ece345d",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "gauge",
+        "label": "units",
+        "format": "{{payload.uplink_message.decoded_payload.bytes[1]}}",
+        "min": 0,
+        "max": "3000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 730,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e55ba3fc904c4d9a",
+        "type": "function",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "Decrypt Payload",
+        "func": "// msg1 - Unencrypted (vanilla data)\nvar msg1 = { payload: msg.payload.length };\nmsg1.payload = JSON.parse(msg.payload);\nmsg1.payload = msg1.payload.uplink_message.frm_payload;\n\n//payload.uplink_message.frm_payload\n\n// msg2 - Decrypt to Text\nvar msg2 = { payload: msg.payload.length };\nmsg2.payload = JSON.parse(msg.payload);\nmsg2.payload = new Buffer(msg2.payload.uplink_message.frm_payload, 'base64').toString('ascii');\n\n// msg3 - Decrypt as Binary value (MSB,LSB)\nvar msg3 = { payload: msg.payload.length };\nmsg3.payload = JSON.parse(msg.payload);\nmsg3.payload = new Buffer(msg3.payload.uplink_message.frm_payload, 'base64').toString('hex');\nmsg3.payload = parseInt(msg3.payload, 16);\n\nreturn [ msg1, msg2, msg3 ];",
+        "outputs": "3",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 560,
+        "wires": [
+            [
+                "52481325d693feff"
+            ],
+            [
+                "5d8894eb0d673354"
+            ],
+            [
+                "ed83d7e165f61d66"
+            ]
+        ]
+    },
+    {
+        "id": "52481325d693feff",
+        "type": "debug",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "msg.payload.payload_raw - DATA (as is)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "5d8894eb0d673354",
+        "type": "debug",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "msg.payload.payload_raw - DATA (decrypted to text)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 996,
+        "y": 602.5,
+        "wires": []
+    },
+    {
+        "id": "ed83d7e165f61d66",
+        "type": "debug",
+        "z": "e12f6b2ed7301b11",
+        "d": true,
+        "name": "msg.payload.payload_raw - DATA (decrypted to Bytes HiLo)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1006,
+        "y": 667.5,
+        "wires": []
+    },
+    {
+        "id": "805437b0566892b0",
+        "type": "function",
+        "z": "e12f6b2ed7301b11",
+        "name": "Decrypt Payload",
+        "func": "\n// msg3 - Decrypt as Binary value (MSB,LSB)\nvar msg3 = { payload: msg.payload.length };\nmsg3.payload = JSON.parse(msg.payload);\nmsg3.payload = new Buffer(msg3.payload.uplink_message.frm_payload, 'base64').toString('hex');\nmsg3.payload = parseInt(msg3.payload, 16);\n\nreturn [msg3];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 360,
+        "wires": [
+            [
+                "5139576d051832a2",
+                "3712a266c2b82b88"
+            ]
+        ]
+    },
+    {
+        "id": "ea7eef963a558315",
+        "type": "ui_gauge",
+        "z": "e12f6b2ed7301b11",
+        "name": "",
+        "group": "811e5a4a3ece345d",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "gauge",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 1090,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "5139576d051832a2",
+        "type": "debug",
+        "z": "e12f6b2ed7301b11",
+        "name": "Decrypted payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "3712a266c2b82b88",
+        "type": "function",
+        "z": "e12f6b2ed7301b11",
+        "name": "divide by 100",
+        "func": "msg.payload = msg.payload/100\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 360,
+        "wires": [
+            [
+                "163c71179d04e1eb",
+                "ea7eef963a558315"
+            ]
+        ]
+    },
+    {
+        "id": "163c71179d04e1eb",
+        "type": "debug",
+        "z": "e12f6b2ed7301b11",
+        "name": "divide by 100",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1090,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "25ca0126e81c401e",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "eu1.cloud.thethings.network",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "811e5a4a3ece345d",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "9c22a6a0e9ec5361",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9c22a6a0e9ec5361",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
