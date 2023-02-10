@@ -14,7 +14,7 @@ lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
 
 # create an OTAA authentication parameters, change them to the provided credentials
 app_eui = ubinascii.unhexlify('0000000000000000')
-app_key = ubinascii.unhexlify('EFE2E2A8F7BA001DF112FABB92B742C6')  # to modify for each node !!
+app_key = ubinascii.unhexlify('xxxxxxxxxxxxxxxxx')  # to modify for each node !!
 
 # join a network using OTAA (Over the Air Activation)
 #uncomment below to use LoRaWAN application provided dev_eui
